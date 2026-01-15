@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Py Messenger</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <header class="topbar pywebview-drag-region">
+        <div class="brand">
+            <div class="brand-icon">J</div>
+            <div class="brand-title">JIFFY</div>
+        </div>
+
+        <div class="topbar-actions no-drag">
+            <button class="icon-btn" id="btnTheme" title="Theme" aria-label="Theme">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 18a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM3 11a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm18 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM5.64 4.22a1 1 0 0 1 1.41 0l.7.7A1 1 0 1 1 6.34 6l-.7-.7a1 1 0 0 1 0-1.08Zm11.31 11.31a1 1 0 0 1 1.41 0l.7.7A1 1 0 1 1 18.06 18l-.7-.7a1 1 0 0 1 0-1.08ZM18.36 4.22a1 1 0 0 1 0 1.41l-.7.7A1 1 0 1 1 16.24 5l.7-.7a1 1 0 0 1 1.42-.08ZM6.34 16.24a1 1 0 0 1 0 1.41l-.7.7A1 1 0 1 1 4.22 18l.7-.7a1 1 0 0 1 1.42-.08Z" />
+                </svg>
+            </button>
+
+            <button class="win-btn" id="btnMin" title="Minimize" aria-label="Minimize">—</button>
+            <button class="win-btn" id="btnMax" title="Maximize / Restore" aria-label="Maximize">□</button>
+            <button class="win-btn danger" id="btnClose" title="Close" aria-label="Close">✕</button>
+        </div>
+    </header>
+
+    <!-- CHAT -->
+    <main class="layout">
+        <section class="chat" id="chatScroll">
+            <div id="chatList" class="chat-list"></div>
+        </section>
+
+        <footer class="composer no-drag">
+            <textarea id="msg"
+                      class="composer-input"
+                      placeholder="Type a message..."
+                      rows="1"
+                      spellcheck="false"></textarea>
+
+            <button id="btnSend" class="send-btn" title="Send" aria-label="Send">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3.4 20.2 21.5 12 3.4 3.8 3 10.4l11 1.6-11 1.6.4 6.6Z" />
+                </svg>
+            </button>
+        </footer>
+    </main>
+
+    <!-- LOGIN OVERLAY -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-shell">
+            <div class="overlay-card no-drag">
+                <div class="overlay-title">Py Messenger</div>
+                <div class="overlay-sub">Введите имя и войдите в чат</div>
+
+                <div class="overlay-row">
+                    <input id="name" class="overlay-input" placeholder="Ваше имя" />
+                    <button id="btnStart" class="overlay-btn">Войти</button>
+                </div>
+
+                <div id="status" class="overlay-status">Not connected</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
