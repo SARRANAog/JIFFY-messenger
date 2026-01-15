@@ -23,6 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Make ICO
+        run: |
+          python tools/make_icon.py
+
       - name: Build EXE (PyInstaller onefile)
         run: |
           if (Test-Path dist) { Remove-Item -Recurse -Force dist }
@@ -33,12 +37,14 @@ jobs:
             --clean `
             --onefile `
             --windowed `
-            --name "PyMessenger" `
+            --name "JIFFY" `
+            --icon "assets/jiffy.ico" `
             --add-data "web;web" `
+            --add-data "assets;assets" `
             client-webview.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PyMessenger-Windows-EXE
-          path: dist/PyMessenger.exe
+          name: JIFFY-Windows-EXE
+          path: dist/JIFFY.exe
