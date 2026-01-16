@@ -11,7 +11,6 @@
     --dangerH: rgba(255, 90, 90, .30);
     --sysBg: rgba(255, 255, 255, .06);
     --sysText: rgba(233, 238, 246, .75);
-    /* NEW: topbar height so overlay can start below it */
     --topbar-h: 48px;
 }
 
@@ -68,15 +67,20 @@ html.light .topbar {
     width: 26px;
     height: 26px;
     border-radius: 10px;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
     background: linear-gradient(135deg, var(--gradA), var(--gradB));
     box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
-    font-size: 14px;
-    color: #fff;
 }
+
+    .brand-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
 
 .brand-title {
     font-size: 20px;
@@ -336,8 +340,7 @@ html.light .send-btn {
         fill: rgba(15, 20, 30, .70);
     }
 
-/* ===== Overlay ===== */
-/* NEW: overlay starts BELOW the topbar so buttons are accessible on login */
+/* ===== Overlay (below topbar) ===== */
 .overlay {
     position: fixed;
     top: var(--topbar-h);
@@ -490,7 +493,7 @@ html.light .chat {
     -webkit-app-region: no-drag;
 }
 
-/* overlay must be clickable (it's below the topbar anyway) */
+/* overlay must be clickable */
 .overlay, .overlay * {
     -webkit-app-region: no-drag;
 }
