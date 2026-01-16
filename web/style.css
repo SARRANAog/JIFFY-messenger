@@ -12,6 +12,7 @@
     --sysBg: rgba(255, 255, 255, .06);
     --sysText: rgba(233, 238, 246, .75);
     --topbar-h: 48px;
+    --sidebar-w: 340px;
 }
 
 html.light {
@@ -41,7 +42,7 @@ body {
     background: radial-gradient(900px 400px at 20% 0%, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0) 60%), radial-gradient(700px 500px at 80% 0%, rgba(255, 255, 255, .08), rgba(255, 255, 255, 0) 60%), linear-gradient(180deg, var(--bg0), var(--bg1));
 }
 
-/* ===== Topbar ===== */
+/* Topbar */
 .topbar {
     height: var(--topbar-h);
     padding: 8px 14px;
@@ -163,28 +164,220 @@ html.light .win-btn {
         background: rgba(15, 20, 30, .07);
     }
 
-/* ===== Layout ===== */
+/* Main layout */
 .layout {
     height: calc(100% - var(--topbar-h));
+    display: flex;
+    min-height: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-w);
+    border-right: 1px solid rgba(255, 255, 255, .06);
+    background: rgba(0, 0, 0, .14);
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
-.chat {
+html.light .sidebar {
+    border-right: 1px solid rgba(15, 20, 30, .08);
+    background: rgba(255, 255, 255, .55);
+}
+
+.sidebar-head {
+    padding: 14px 14px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.mini-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+    .mini-btn:hover {
+        background: rgba(255,255,255,.10);
+    }
+
+    .mini-btn:active {
+        transform: translateY(1px);
+    }
+
+html.light .mini-btn {
+    border: 1px solid rgba(15,20,30,.10);
+    background: rgba(15,20,30,.04);
+}
+
+    html.light .mini-btn:hover {
+        background: rgba(15,20,30,.07);
+    }
+
+.sidebar-search {
+    padding: 0 14px 12px;
+}
+
+.sidebar-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.05);
+    color: var(--text);
+    outline: none;
+    font-size: 14px;
+}
+
+html.light .sidebar-input {
+    border: 1px solid rgba(15,20,30,.10);
+    background: rgba(15,20,30,.04);
+}
+
+.chatlist {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 6px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chatitem {
+    padding: 12px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.05);
+    cursor: pointer;
+}
+
+    .chatitem:hover {
+        background: rgba(255,255,255,.08);
+    }
+
+    .chatitem.active {
+        background: rgba(255,255,255,.12);
+        border-color: rgba(255,255,255,.14);
+    }
+
+html.light .chatitem {
+    border: 1px solid rgba(15,20,30,.10);
+    background: rgba(15,20,30,.04);
+}
+
+    html.light .chatitem:hover {
+        background: rgba(15,20,30,.07);
+    }
+
+    html.light .chatitem.active {
+        background: rgba(15,20,30,.10);
+        border-color: rgba(15,20,30,.14);
+    }
+
+.chatitem-title {
+    font-weight: 900;
+    font-size: 14px;
+}
+
+.chatitem-preview {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chatitem-meta {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(233,238,246,.45);
+    font-size: 12px;
+}
+
+html.light .chatitem-meta {
+    color: rgba(15,20,30,.45);
+}
+
+.sidebar-foot {
+    padding: 10px 14px 14px;
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+html.light .sidebar-foot {
+    border-top: 1px solid rgba(15,20,30,.08);
+}
+
+.sidebar-status {
+    color: rgba(233,238,246,.55);
+    font-size: 12px;
+}
+
+html.light .sidebar-status {
+    color: rgba(15,20,30,.55);
+}
+
+/* Main pane */
+.mainpane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.chathead {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,0));
+}
+
+html.light .chathead {
+    border-bottom: 1px solid rgba(15, 20, 30, .08);
+    background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,0));
+}
+
+.chathead-title {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.chathead-sub {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.messages {
     flex: 1;
     padding: 18px 18px;
     overflow: auto;
     min-height: 0;
 }
 
-.chat-list {
+.msg-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* ===== Bubbles ===== */
 .bubble-row {
     display: flex;
     align-items: flex-end;
@@ -203,7 +396,7 @@ html.light .win-btn {
     }
 
 .bubble {
-    max-width: min(620px, 78vw);
+    max-width: min(720px, 78vw);
     padding: 14px 16px;
     border-radius: 18px;
     border: 1px solid var(--bubbleStroke);
@@ -222,7 +415,7 @@ html.light .win-btn {
     }
 
     .bubble.system {
-        max-width: min(760px, 90vw);
+        max-width: min(900px, 90vw);
         padding: 10px 14px;
         border-radius: 14px;
         background: var(--sysBg);
@@ -257,7 +450,7 @@ html.light .ts {
     color: rgba(15, 20, 30, .45);
 }
 
-/* ===== Composer ===== */
+/* Composer */
 .composer {
     padding: 14px 18px 18px;
     border-top: 1px solid rgba(255, 255, 255, .06);
@@ -340,7 +533,7 @@ html.light .send-btn {
         fill: rgba(15, 20, 30, .70);
     }
 
-/* ===== Overlay (below topbar) ===== */
+/* Overlay */
 .overlay {
     position: fixed;
     top: var(--topbar-h);
@@ -391,11 +584,14 @@ html.light .overlay-card {
 }
 
 .overlay-row {
-    margin-top: 18px;
     display: flex;
     gap: 12px;
     align-items: center;
 }
+
+    .overlay-row.hidden {
+        display: none;
+    }
 
 .overlay-input {
     flex: 1;
@@ -416,8 +612,8 @@ html.light .overlay-input {
 
 .overlay-btn {
     height: 56px;
-    min-width: 140px;
-    padding: 0 20px;
+    min-width: 240px;
+    padding: 0 22px;
     border-radius: 18px;
     border: none;
     cursor: pointer;
@@ -431,6 +627,11 @@ html.light .overlay-input {
         transform: translateY(1px);
     }
 
+    .overlay-btn:disabled {
+        cursor: default;
+        filter: grayscale(.2);
+    }
+
 .overlay-status {
     margin-top: 14px;
     color: rgba(233, 238, 246, .55);
@@ -441,50 +642,91 @@ html.light .overlay-status {
     color: rgba(15, 20, 30, .55);
 }
 
-/* ===== Scrollbar styling ===== */
-.chat::-webkit-scrollbar {
+.overlay-tab {
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    .overlay-tab:hover {
+        background: rgba(255,255,255,.10);
+    }
+
+    .overlay-tab.active {
+        background: rgba(255,255,255,.16);
+        border-color: rgba(255,255,255,.18);
+    }
+
+html.light .overlay-tab {
+    border: 1px solid rgba(15,20,30,.10);
+    background: rgba(15,20,30,.04);
+}
+
+    html.light .overlay-tab:hover {
+        background: rgba(15,20,30,.07);
+    }
+
+    html.light .overlay-tab.active {
+        background: rgba(15,20,30,.10);
+        border-color: rgba(15,20,30,.14);
+    }
+
+/* Scrollbar */
+.chatlist::-webkit-scrollbar,
+.messages::-webkit-scrollbar {
     width: 10px;
 }
 
-.chat::-webkit-scrollbar-track {
+.chatlist::-webkit-scrollbar-track,
+.messages::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, .04);
     border-radius: 12px;
 }
 
-.chat::-webkit-scrollbar-thumb {
+.chatlist::-webkit-scrollbar-thumb,
+.messages::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, .16);
     border-radius: 12px;
     border: 2px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
 }
 
-    .chat::-webkit-scrollbar-thumb:hover {
+    .chatlist::-webkit-scrollbar-thumb:hover,
+    .messages::-webkit-scrollbar-thumb:hover {
         background: rgba(255, 255, 255, .22);
     }
 
-html.light .chat::-webkit-scrollbar-track {
+html.light .chatlist::-webkit-scrollbar-track,
+html.light .messages::-webkit-scrollbar-track {
     background: rgba(15, 20, 30, .04);
 }
 
-html.light .chat::-webkit-scrollbar-thumb {
+html.light .chatlist::-webkit-scrollbar-thumb,
+html.light .messages::-webkit-scrollbar-thumb {
     background: rgba(15, 20, 30, .16);
 }
 
-    html.light .chat::-webkit-scrollbar-thumb:hover {
+    html.light .chatlist::-webkit-scrollbar-thumb:hover,
+    html.light .messages::-webkit-scrollbar-thumb:hover {
         background: rgba(15, 20, 30, .22);
     }
 
-/* Firefox */
-.chat {
+.chatlist, .messages {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, .18) rgba(255, 255, 255, .05);
 }
 
-html.light .chat {
+html.light .chatlist, html.light .messages {
     scrollbar-color: rgba(15, 20, 30, .18) rgba(15, 20, 30, .05);
 }
 
-/* ===== pywebview drag rules ===== */
+/* pywebview */
 .pywebview-drag-region {
     -webkit-app-region: drag;
 }
@@ -493,7 +735,6 @@ html.light .chat {
     -webkit-app-region: no-drag;
 }
 
-/* overlay must be clickable */
 .overlay, .overlay * {
     -webkit-app-region: no-drag;
 }
