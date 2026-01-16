@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- TOP BAR -->
     <header class="topbar pywebview-drag-region">
         <div class="brand">
             <div class="brand-icon" aria-hidden="true">
@@ -30,43 +29,98 @@
         </div>
     </header>
 
-    <!-- CHAT -->
     <main class="layout">
-        <section class="chat" id="chatScroll">
-            <div id="chatList" class="chat-list"></div>
+        <aside class="sidebar no-drag">
+            <div class="sidebar-head">
+                <div class="sidebar-title">Чаты</div>
+                <button class="mini-btn" id="btnNewChat" title="Новый чат" aria-label="Новый чат">＋</button>
+            </div>
+
+            <div class="sidebar-search">
+                <input id="chatSearch" class="sidebar-input" placeholder="Поиск..." autocomplete="off" />
+            </div>
+
+            <div id="chatList" class="chatlist"></div>
+
+            <div class="sidebar-foot">
+                <div class="sidebar-status" id="sidebarStatus">Not connected</div>
+            </div>
+        </aside>
+
+        <section class="mainpane">
+            <div class="chathead no-drag">
+                <div class="chathead-title" id="activeChatTitle">Выберите чат</div>
+                <div class="chathead-sub" id="activeChatSub"> </div>
+            </div>
+
+            <section class="messages" id="msgScroll">
+                <div id="msgList" class="msg-list"></div>
+            </section>
+
+            <footer class="composer no-drag">
+                <textarea id="msg"
+                          class="composer-input"
+                          placeholder="Type a message..."
+                          rows="1"
+                          spellcheck="false"></textarea>
+
+                <button id="btnSend" class="send-btn" title="Send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3.4 20.2 21.5 12 3.4 3.8 3 10.4l11 1.6-11 1.6.4 6.6Z" />
+                    </svg>
+                </button>
+            </footer>
         </section>
-
-        <footer class="composer no-drag">
-            <textarea id="msg"
-                      class="composer-input"
-                      placeholder="Type a message..."
-                      rows="1"
-                      spellcheck="false"></textarea>
-
-            <button id="btnSend" class="send-btn" title="Send" aria-label="Send">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3.4 20.2 21.5 12 3.4 3.8 3 10.4l11 1.6-11 1.6.4 6.6Z" />
-                </svg>
-            </button>
-        </footer>
     </main>
 
-    <!-- LOGIN OVERLAY -->
     <div id="overlay" class="overlay">
         <div class="overlay-shell">
             <div class="overlay-card no-drag">
                 <div class="overlay-title">JIFFY</div>
-                <div class="overlay-sub">Введите имя и войдите в чат</div>
+                <div class="overlay-sub">Войдите или зарегистрируйтесь</div>
 
-                <div class="overlay-row">
-                    <input id="name" class="overlay-input" placeholder="Ваше имя" />
+                <div class="overlay-row" style="gap: 10px; margin-top: 16px;">
+                    <button id="tabLogin" class="overlay-tab active" type="button">Вход</button>
+                    <button id="tabRegister" class="overlay-tab" type="button">Регистрация</button>
+                </div>
+
+                <div class="overlay-row" style="margin-top: 14px;">
+                    <input id="name" class="overlay-input" placeholder="@username" autocomplete="username" />
+                </div>
+
+                <div class="overlay-row" style="margin-top: 10px;">
+                    <input id="pass" class="overlay-input" placeholder="Пароль" type="password" autocomplete="current-password" />
+                </div>
+
+                <div class="overlay-row hidden" id="rowBio" style="margin-top: 10px;">
+                    <input id="bio" class="overlay-input" placeholder="Био (необязательно)" autocomplete="off" />
+                </div>
+
+                <div class="overlay-row" style="margin-top: 16px;">
                     <button id="btnStart" class="overlay-btn">Войти</button>
                 </div>
 
                 <div id="status" class="overlay-status">Not connected</div>
+                <div id="mode" class="overlay-status" style="margin-top: 6px;">Режим: вход</div>
             </div>
         </div>
     </div>
+
+    <script>
+        window.addEventListener("error", function (e) {
+            try {
+                var el = document.getElementById("status");
+                if (el) el.textContent = "JS error: " + (e.message || "unknown");
+            } catch (_) { }
+        });
+        window.addEventListener("unhandledrejection", function (e) {
+            try {
+                var el = document.getElementById("status");
+                var r = e && e.reason ? (e.reason.message || e.reason) : "unknown";
+                if (el) el.textContent = "Promise error: " + r;
+            } catch (_) { }
+        });
+    </script>
 
     <script src="app.js"></script>
 </body>
