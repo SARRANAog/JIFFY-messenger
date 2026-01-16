@@ -1,9 +1,13 @@
+# .github/workflows/build-windows-exe.yml
 name: Build Windows EXE
 
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    tags:
+      - "v*"
+    paths-ignore:
+      - "**/*.md"
 
 jobs:
   build:
@@ -13,38 +17,52 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install deps
+      - name: Install dependencies
+        shell: pwsh
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip wheel setuptools
+          if (Test-Path "requirements.txt") {
+            pip install -r requirements.txt
+          } else {
+            pip install pyinstaller pywebview
+          }
+          pip install pyinstaller
 
-      - name: Make ICO
+      - name: Build EXE (PyInstaller)
+        shell: pwsh
         run: |
-          python tools/make_icon.py
+          # Entry point: client-webview.py (change if your main script is named differently)
+          $ENTRY = "client-webview.py"
+          if (!(Test-Path $ENTRY)) {
+            Write-Host "ERROR: $ENTRY not found. Update ENTRY in workflow."
+            exit 1
+          }
 
-      - name: Build EXE (PyInstaller onefile)
-        run: |
-          if (Test-Path dist) { Remove-Item -Recurse -Force dist }
-          if (Test-Path build) { Remove-Item -Recurse -Force build }
+          # Bundle assets (web UI + logo). Adjust paths if yours differ.
+          $ADD_DATA = @()
+          if (Test-Path "web")      { $ADD_DATA += @("--add-data", "web;web") }
+          if (Test-Path "logo.png") { $ADD_DATA += @("--add-data", "logo.png;.") }
 
+          # Build (GUI app => --noconsole). Name will be JIFFY.exe
           pyinstaller `
             --noconfirm `
             --clean `
             --onefile `
-            --windowed `
+            --noconsole `
             --name "JIFFY" `
-            --icon "assets/jiffy.ico" `
-            --add-data "web;web" `
-            --add-data "assets;assets" `
-            client-webview.py
+            @ADD_DATA `
+            $ENTRY
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: JIFFY-Windows-EXE
-          path: dist/JIFFY.exe
+          name: JIFFY-windows-exe
+          path: |
+            dist/JIFFY.exe
+            dist/*
