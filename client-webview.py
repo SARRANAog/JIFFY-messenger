@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import ctypes
 import json
 import os
 import socket
@@ -13,6 +14,8 @@ import webview
 DEFAULT_HOST = "wispy-breeze-6674.fly.dev"
 DEFAULT_PORT = 443
 DEFAULT_TLS = True
+
+APP_TITLE = "JIFFY"
 
 _window: Optional[webview.Window] = None
 
@@ -158,6 +161,30 @@ class Settings:
             pass
 
 
+# --- Windows work area (exclude taskbar) ---
+class _RECT(ctypes.Structure):
+    _fields_ = [("left", ctypes.c_long), ("top", ctypes.c_long), ("right", ctypes.c_long), ("bottom", ctypes.c_long)]
+
+
+def _get_primary_work_area() -> Tuple[int, int, int, int]:
+    """
+    Возвращает (x, y, width, height) рабочей области (без панели задач) для primary monitor.
+    """
+    try:
+        SPI_GETWORKAREA = 0x0030
+        rect = _RECT()
+        ok = ctypes.windll.user32.SystemParametersInfoW(SPI_GETWORKAREA, 0, ctypes.byref(rect), 0)
+        if ok:
+            x = int(rect.left)
+            y = int(rect.top)
+            w = int(rect.right - rect.left)
+            h = int(rect.bottom - rect.top)
+            return x, y, w, h
+    except Exception:
+        pass
+    return 0, 0, 1000, 700
+
+
 class Api:
     def __init__(self, state: ClientState, settings: Settings) -> None:
         self.state = state
@@ -228,35 +255,64 @@ class Api:
 
     def win_toggle_max(self):
         """
-        FIX: в некоторых версиях pywebview свойство _window.maximized
-        не обновляется корректно. Делаем toggle на нашей стороне.
+        Максимизация НЕ в fullscreen, а в рабочую область (без панели задач).
+        Restore возвращает прежний размер/позицию.
         """
         if not _window:
             return
 
-        # лениво создаём флаг на объекте окна
         if not hasattr(_window, "_is_maximized"):
             setattr(_window, "_is_maximized", False)
+        if not hasattr(_window, "_normal_bounds"):
+            try:
+                nb = (int(_window.x), int(_window.y), int(_window.width), int(_window.height))
+            except Exception:
+                nb = (80, 80, 1000, 700)
+            setattr(_window, "_normal_bounds", nb)
 
-        is_max = getattr(_window, "_is_maximized", False)
+        is_max = bool(getattr(_window, "_is_maximized", False))
 
         try:
             if is_max:
-                _window.restore()
+                x, y, w, h = getattr(_window, "_normal_bounds", (80, 80, 1000, 700))
+                try:
+                    _window.move(int(x), int(y))
+                except Exception:
+                    pass
+                try:
+                    _window.resize(int(w), int(h))
+                except Exception:
+                    pass
                 setattr(_window, "_is_maximized", False)
             else:
-                _window.maximize()
+                try:
+                    setattr(
+                        _window,
+                        "_normal_bounds",
+                        (int(_window.x), int(_window.y), int(_window.width), int(_window.height)),
+                    )
+                except Exception:
+                    pass
+
+                x, y, w, h = _get_primary_work_area()
+                try:
+                    _window.move(int(x), int(y))
+                except Exception:
+                    pass
+                try:
+                    _window.resize(int(w), int(h))
+                except Exception:
+                    pass
+
                 setattr(_window, "_is_maximized", True)
         except Exception:
-            # fallback: пробуем всё равно переключиться
-            try:
-                _window.restore()
-                setattr(_window, "_is_maximized", False)
-            except Exception:
-                pass
+            pass
 
 
 def _ensure_workdir():
+    """
+    Делает так, чтобы url="web/index.html" работал и в dev, и в PyInstaller onefile.
+    """
     try:
         import sys
 
@@ -279,7 +335,7 @@ def main():
     api = Api(state, settings)
 
     _window = webview.create_window(
-        "Py Messenger",
+        APP_TITLE,
         url="web/index.html",
         width=1000,
         height=700,
