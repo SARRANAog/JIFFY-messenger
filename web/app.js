@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let authMode = "login"; // login | register
 
     // ------------------------
-    // Chat model (client MVP)
+    // Chat model
     // ------------------------
     // chatId: "system" or "dm:@user"
     const chatsById = new Map();        // chatId -> {id,title,lastText,lastTsTxt,unread}
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentChatId = "system";
 
     // Dedupe server echo vs optimistic
-    // client_msg_id -> chatId (so echo knows where to go)
+    // client_msg_id -> chatId
     const pendingEcho = new Map();
 
     function api() {
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const list = messagesByChat.get(chatId);
         if (!list) return;
 
-        // dedupe by clientMsgId (important for our own echo)
+        // dedupe by clientMsgId
         if (msg.clientMsgId) {
             const exists = list.some(m => m.clientMsgId && m.clientMsgId === msg.clientMsgId);
             if (exists) return;
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectChat(id);
     }
 
-    // ✅ NEW: proper "add interlocutor" action from plus button
+    // add interlocutor
     function startNewChatFlow() {
         // 1) use search value if exists
         const fromSearch = (elChatSearch?.value || "").trim();
@@ -282,12 +282,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         openOrCreateDM(peer);
 
-        // keep search clean (optional)
+        // keep search clean
         if (elChatSearch) elChatSearch.value = "";
         renderChatList();
     }
 
-    // ✅ NEW: if user is in system but typed @user in search, auto-create chat and send there
+    // auto-create chat and send there
     function resolveChatForSend() {
         if (currentChatId && currentChatId !== "system") return currentChatId;
 
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let chatTitle = null;
 
         if (!isMe) {
-            // ✅ FIX: входящее сообщение ВСЕГДА создаёт чат у получателя
+            // входящее сообщение создаёт чат у получателя
             const peer = normalizeUser(fromName);
             chatId = chatIdFromPeer(peer);
             chatTitle = peer;
@@ -358,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!chatId) chatId = "system";
 
-        // Добавляем в историю (и не дублируем по clientMsgId)
+        // Добавляем в историю
         addMessageToChat(chatId, {
             me: isMe,
             from: fromName,
@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------
     // Sidebar: search + new chat
     // ----------------------------
-    // ✅ FIX: plus button actually starts new chat (add interlocutor)
+    // plus button actually starts new chat
     btnNewChat?.addEventListener("click", () => {
         startNewChatFlow();
     });
@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const msg = (text || "");
         if (!msg.trim()) return;
 
-        // ✅ FIX: if we're still in system, try to resolve chat from search
+       
         if (!currentChatId || currentChatId === "system") {
             const resolved = resolveChatForSend();
             if (!resolved) {
@@ -542,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const clientMsgId = genClientMsgId();
         pendingEcho.set(clientMsgId, currentChatId);
 
-        // optimistic: сразу в историю/рендер
+       
         addMessageToChat(currentChatId, {
             me: true,
             from: myName,
@@ -562,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // IMPORTANT: оставляем сигнатуру (text, clientMsgId) как у тебя
+       
         const res = await a.send_message(msg.trim(), clientMsgId);
         if (res?.ok === false) {
             setStatus("Send failed: " + res.error);
